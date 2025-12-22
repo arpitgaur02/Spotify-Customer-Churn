@@ -1,70 +1,76 @@
-# Reuters Newswires Classifier
+# Spotify Customer Churn Prediction
 
-A multi-class classification application that categorizes news articles into **46 mutually exclusive topics** (e.g., 'earn', 'acq', 'crude', 'grain'). This project features a **FastAPI** backend with a custom **NumPy-based inference engine**, demonstrating deep learning concepts from scratch without relying on heavy frameworks like TensorFlow or PyTorch for production.
+This project focuses on predicting customer churn for Spotify users using machine learning. By analyzing user behavior, demographics, and usage patterns, the model identifies users who are likely to cancel their subscription, enabling proactive retention strategies.
 
 ## 📌 Project Overview
 
-The goal of this project is to automatically label Reuters newswires with their corresponding topics. The system uses a neural network trained on the Reuters dataset.
+Customer churn is a critical metric for subscription-based services like Spotify. This project analyzes a dataset of user activity to understand the factors contributing to churn and builds a predictive model to classify users as "Churned" or "Not Churned."
 
-**Key Highlights:**
-* **Custom Inference Engine:** The entire forward pass (matrix multiplications, ReLU, Softmax) is implemented manually using **NumPy**, making the production code lightweight and transparent.
-* **46-Class Classification:** Capable of distinguishing between a wide variety of news topics.
-* **Full-Stack Application:** Includes a FastAPI backend and a clean HTML/JavaScript frontend for real-time user interaction.
+**Key Features:**
+* **Exploratory Data Analysis (EDA):** Visualizing correlations and distributions of user data (e.g., skip rates, listening time).
+* **Data Preprocessing:** Handling categorical variables (Gender, Subscription Type) and scaling numerical features.
+* **Predictive Modeling:** Implementing **Logistic Regression** to classify users.
+* **Evaluation:** Assessing model performance using accuracy and confusion matrices.
 
 ## 📂 Repository Structure
 
-- `main.py`: The core FastAPI application. It loads the model weights, performs text vectorization, runs the custom forward pass, and serves the API endpoints.
-- `static/index.html`: A responsive frontend where users can paste news text and view the predicted category.
-- `models/model_assets.npz`: Compressed NumPy archive containing the trained weights (`W1`, `b1`, etc.) and the word index dictionary required for preprocessing.
-- `reuters_nn_model.ipynb`: The Jupyter Notebook used for training the model. It covers data loading, preprocessing, and the training loop implementation.
+- `Churn_Analysis.ipynb`: The main Jupyter Notebook containing the code for data cleaning, EDA, preprocessing, and model training.
+- `spotify_churn_dataset.csv`: (Assumed) The dataset used for training and testing the model.
+- `correlation_heatmap.png`: Visualization showing the correlation between different features (e.g., Skip Rate vs. Churn).
+- `pairplot_numeric.png`: Pairplot visualizing relationships between numeric variables.
+- `README.md`: Project documentation.
 
 ## 🛠️ Technologies Used
 
-- **Backend:** Python, FastAPI, Uvicorn
-- **Computation:** NumPy (used for all matrix operations and activation functions during inference)
-- **Frontend:** HTML5, CSS, JavaScript (Fetch API)
-- **Data:** Reuters Dataset (via Keras datasets for training)
+- **Python**
+- **Pandas & NumPy:** For data manipulation and analysis.
+- **Matplotlib & Seaborn:** For data visualization (Heatmaps, Pairplots).
+- **Scikit-Learn:** For building the Logistic Regression model, splitting data, and evaluation.
 
-## 🧠 Model Architecture
+## 📊 Dataset Details
 
-The underlying model is a **Multilayer Perceptron (MLP)** with the following structure:
+The dataset contains user-level information including:
+- **Demographics:** Age, Gender, Country.
+- **Subscription Info:** Subscription Type (Free, Premium, Family, Student), Device Type.
+- **Usage Metrics:**
+  - `listening_time`: Total time spent listening.
+  - `songs_played_per_day`: Average daily song count.
+  - `skip_rate`: Percentage of songs skipped (strong indicator of dissatisfaction).
+  - `ads_listened_per_week`: Number of ads consumed.
+  - `offline_listening`: Whether the user utilizes offline mode.
+- **Target Variable:** `is_churned` (1 = Churned, 0 = Retained).
 
-1.  **Input Layer:** Bag-of-Words representation (Vectorized text, max 10,000 words).
-2.  **Hidden Layers:** Two dense layers using **ReLU** activation.
-3.  **Output Layer:** A dense layer with 46 units using **Softmax** activation to output probabilities for each category.
+## 🧠 Model & Analysis
 
-*Note: While the model structure is standard, the specific implementation in `main.py` manually calculates `Z = W.dot(X) + b` and applies activations without high-level Keras/Torch layers.*
+1.  **Data Processing:**
+    - Loaded the dataset and checked for null values.
+    - Performed feature scaling using `StandardScaler` to normalize numerical inputs.
+    - Split data into training and testing sets.
+
+2.  **Model:**
+    - **Logistic Regression:** Used as the baseline model to predict the binary outcome of churn.
+
+3.  **Key Insights (Example):**
+    - High `skip_rate` is often positively correlated with churn.
+    - Users with higher `listening_time` are generally less likely to churn.
 
 ## 🚀 How to Run
 
-1.  **Clone the repository**
+1.  Clone the repository:
     ```bash
     git clone <your-repo-url>
-    cd <repo-name>
     ```
-
-2.  **Install Dependencies**
-    You will need FastAPI, Uvicorn, and NumPy.
+2.  Install required libraries:
     ```bash
-    pip install fastapi uvicorn numpy pydantic
+    pip install pandas numpy matplotlib seaborn scikit-learn
     ```
-
-3.  **Start the Server**
+3.  Open and run the notebook:
     ```bash
-    python main.py
+    jupyter notebook Churn_Analysis.ipynb
     ```
-    *Note: Ensure `main.py` contains the block `uvicorn.run(...)`, otherwise run with `uvicorn main:app --reload`.*
 
-4.  **Access the App**
-    Open your browser and navigate to:
-    `http://localhost:8000` (or the port specified in your console).
+## 📈 Future Improvements
 
-## 📊 API Usage
-
-**Endpoint:** `POST /predict`
-
-**Request:**
-```json
-{
-  "text": "The company reported a profit of 5 million dollars..."
-}
+- Test advanced models like **Random Forest** or **XGBoost** for better accuracy.
+- Perform hyperparameter tuning.
+- Deploy the model as a simple web app (using Streamlit or Flask).
