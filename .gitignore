@@ -1,8 +1,25 @@
-__pycache__/
-*.py[cod]
-.ipynb_checkpoints/
-.env
-.venv
-dataset/
-data/
+# --- System Files (Mac) ---
+.DS_Store
+
+# --- Data Files (Privacy & Size Safety) ---
+# Ignore all CSVs (Raw and Processed)
 *.csv
+
+# Ignore Pickle & Joblib files (Saved models/data)
+*.pkl
+*.joblib
+
+# --- Jupyter Notebooks ---
+# Ignore the auto-generated checkpoint folders
+.ipynb_checkpoints/
+
+# --- Python Internals ---
+__pycache__/
+*.pyc
+
+# --- Environments & Config ---
+# If you use a virtual env, ignore it
+venv/
+env/
+.venv/
+.env
