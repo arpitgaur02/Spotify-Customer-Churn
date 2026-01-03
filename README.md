@@ -7,9 +7,9 @@
 ## 📌 Project Overview
 Customer Churn (users cancelling subscriptions) is a critical metric for streaming services. This project builds an end-to-end Machine Learning pipeline to **predict which users are likely to cancel**, allowing the business to intervene with retention offers.
 
-The system handles severe **Class Imbalance** (80% stay / 20% leave) and utilizes a custom preprocessing pipeline with **Feature Engineering**.
+The system handles severe **Class Imbalance** (80% stay / 20% leave) and utilizes a custom preprocessing pipeline with intensive **Feature Engineering**.
 
-## 📊 Key Results
+## 📊 Key Results Summary
 | Model | Accuracy | Churn Recall (Safety) | Churn Precision (Trust) | Verdict |
 | :--- | :--- | :--- | :--- | :--- |
 | **Baseline (Guessing)** | 81% | 0% | 0% | Useless |
@@ -17,9 +17,30 @@ The system handles severe **Class Imbalance** (80% stay / 20% leave) and utilize
 
 > **Business Impact:** While the model generates some false alarms (Precision 32%), it successfully identifies **62% of at-risk users** who were previously invisible. We prioritized **Recall** to maximize retention opportunities.
 
+---
+
+## 📈 Exploratory Data Analysis (EDA)
+Before modeling, we investigated the dataset to understand key relationships and distributions.
+
+### 1. Feature Correlations
+An analysis of how numerical features correlate with each other and the target variable (`is_churned`).
+![Correlation Matrix](EDA/correlation_matrix.png)
+
+### 2. Numerical Feature Distributions
+Visualizing the spread of key numerical behaviors like daily listening minutes and skip behavior.
+![Numerical Columns Distributions](EDA/num_cols.png)
+
+### 3. Categorical & Geographic Analysis
+Investigating how churn behaves across different regions and subscription tiers.
+![Country-wise Churn Analysis](EDA/country_wise.png)
+*Categorical feature breakdown:*
+![Categorical Columns Analysis](EDA/cat_cols.png)
+
+---
+
 ## 🛠️ The Pipeline
 
-### 1. Data Cleaning & Engineering (`01_EDA_and_Cleaning`)
+### 1. Data Cleaning & Engineering
 - **String Sanitization:** Fixed hidden whitespace bugs in categorical columns (e.g., `' India '` → `'India'`).
 - **Feature Engineering:**
     - `skips_ratio`: Calculated `skips_per_day / avg_daily_minutes` to measure user frustration.
@@ -33,26 +54,33 @@ We used a split-pipeline approach to handle mixed data types safely:
 - **Binary Flags:** Passthrough (preserved `0`/`1` logic without scaling).
 
 ### 3. Modeling
-- Addressed imbalance using `class_weight='balanced'`.
+- Addressed imbalance using `class_weight='balanced'` in Logistic Regression.
 - Tuned the **Decision Threshold** from 0.50 to 0.75 to reduce false positives.
 
-## 📈 Visualizations
-### Correlation Heatmap
-*Analysis of feature relationships and multicollinearity.*
-![Correlation Heatmap](correlation_heatmap.png)
+---
 
-### Numerical Pairplot
-*Distribution of daily minutes vs. skips for churned vs. retained users.*
-![Pairplot](pairplot_numeric.png)
+## 📊 Model Evaluation
+
+### Confusion Matrix
+The confusion matrix visualizes the performance of the deployed model on the test set. Given the imbalanced data, we focus heavily on the **True Positives (Bottom Right)**—the churners we successfully caught—versus the **False Negatives (Bottom Left)**—the churners we missed.
+
+![Confusion Matrix Results](results/cm.png)
+
+---
 
 ## 📂 Project Structure
 ```bash
 Spotify-Customer-Churn/
-├── data/                   # Raw and Processed Data (Ignored by Git)
-├── notebooks/
-│   ├── 01_EDA_Cleaning.ipynb    # Data Janitor work
-│   ├── 02_Classical_Models.ipynb # Logistic Regression & XGBoost
-│   └── 03_Deep_Learning.ipynb    # PyTorch Implementation (In Progress)
-├── plots/                  # Generated PNGs
+├── EDA/                    # Exploratory Data Analysis graphs
+│   ├── cat_cols.png
+│   ├── correlation_matrix.png
+│   ├── country_wise.png
+│   └── num_cols.png
+├── results/                # Model evaluation metrics/graphs
+│   └── cm.png
+├── data.csv                # Raw data (often gitignored in real projects)
+├── X_processed.csv         # Processed features placeholder
+├── main.ipynb              # Main workflow notebook
+├── old_main.ipynb          # Previous versions
 ├── README.md               # Project Documentation
-└── requirements.txt        # Dependencies
+└── .gitignore              # Git exclusion rules
