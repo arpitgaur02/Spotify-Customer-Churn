@@ -80,7 +80,7 @@ The detailed breakdown of Precision, Recall, and F1-Score for each class (0 = Re
     accuracy                           0.68       200
    macro avg       0.60      0.66      0.60       200
 weighted avg       0.78      0.68      0.71       200
-
+```
 
 ## 📂 Project Structure
 ```bash
