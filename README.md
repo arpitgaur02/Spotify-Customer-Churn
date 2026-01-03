@@ -1,76 +1,58 @@
-# Spotify Customer Churn Prediction
+# 🎵 Spotify Churn Prediction System
 
-This project focuses on predicting customer churn for Spotify users using machine learning. By analyzing user behavior, demographics, and usage patterns, the model identifies users who are likely to cancel their subscription, enabling proactive retention strategies.
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
+![Library](https://img.shields.io/badge/Library-Scikit--Learn-orange)
+![Status](https://img.shields.io/badge/Status-Deep%20Learning%20Integration-yellow)
 
 ## 📌 Project Overview
+Customer Churn (users cancelling subscriptions) is a critical metric for streaming services. This project builds an end-to-end Machine Learning pipeline to **predict which users are likely to cancel**, allowing the business to intervene with retention offers.
 
-Customer churn is a critical metric for subscription-based services like Spotify. This project analyzes a dataset of user activity to understand the factors contributing to churn and builds a predictive model to classify users as "Churned" or "Not Churned."
+The system handles severe **Class Imbalance** (80% stay / 20% leave) and utilizes a custom preprocessing pipeline with **Feature Engineering**.
 
-**Key Features:**
-* **Exploratory Data Analysis (EDA):** Visualizing correlations and distributions of user data (e.g., skip rates, listening time).
-* **Data Preprocessing:** Handling categorical variables (Gender, Subscription Type) and scaling numerical features.
-* **Predictive Modeling:** Implementing **Logistic Regression** to classify users.
-* **Evaluation:** Assessing model performance using accuracy and confusion matrices.
+## 📊 Key Results
+| Model | Accuracy | Churn Recall (Safety) | Churn Precision (Trust) | Verdict |
+| :--- | :--- | :--- | :--- | :--- |
+| **Baseline (Guessing)** | 81% | 0% | 0% | Useless |
+| **Logistic Regression (Balanced)** | **68%** | **62%** | **32%** | **Deployed** |
 
-## 📂 Repository Structure
+> **Business Impact:** While the model generates some false alarms (Precision 32%), it successfully identifies **62% of at-risk users** who were previously invisible. We prioritized **Recall** to maximize retention opportunities.
 
-- `Churn_Analysis.ipynb`: The main Jupyter Notebook containing the code for data cleaning, EDA, preprocessing, and model training.
-- `spotify_churn_dataset.csv`: (Assumed) The dataset used for training and testing the model.
-- `correlation_heatmap.png`: Visualization showing the correlation between different features (e.g., Skip Rate vs. Churn).
-- `pairplot_numeric.png`: Pairplot visualizing relationships between numeric variables.
-- `README.md`: Project documentation.
+## 🛠️ The Pipeline
 
-## 🛠️ Technologies Used
+### 1. Data Cleaning & Engineering (`01_EDA_and_Cleaning`)
+- **String Sanitization:** Fixed hidden whitespace bugs in categorical columns (e.g., `' India '` → `'India'`).
+- **Feature Engineering:**
+    - `skips_ratio`: Calculated `skips_per_day / avg_daily_minutes` to measure user frustration.
+    - `engagement_score`: A weighted index of login frequency and listening time.
+    - `is_inactive`: Flagged users with >14 days since last login.
 
-- **Python**
-- **Pandas & NumPy:** For data manipulation and analysis.
-- **Matplotlib & Seaborn:** For data visualization (Heatmaps, Pairplots).
-- **Scikit-Learn:** For building the Logistic Regression model, splitting data, and evaluation.
+### 2. Preprocessing Architecture (`ColumnTransformer`)
+We used a split-pipeline approach to handle mixed data types safely:
+- **Numerical:** Imputation (Median) → Standard Scaling (`StandardScaler`).
+- **Categorical:** One-Hot Encoding (`drop='first'` to avoid multicollinearity).
+- **Binary Flags:** Passthrough (preserved `0`/`1` logic without scaling).
 
-## 📊 Dataset Details
+### 3. Modeling
+- Addressed imbalance using `class_weight='balanced'`.
+- Tuned the **Decision Threshold** from 0.50 to 0.75 to reduce false positives.
 
-The dataset contains user-level information including:
-- **Demographics:** Age, Gender, Country.
-- **Subscription Info:** Subscription Type (Free, Premium, Family, Student), Device Type.
-- **Usage Metrics:**
-  - `listening_time`: Total time spent listening.
-  - `songs_played_per_day`: Average daily song count.
-  - `skip_rate`: Percentage of songs skipped (strong indicator of dissatisfaction).
-  - `ads_listened_per_week`: Number of ads consumed.
-  - `offline_listening`: Whether the user utilizes offline mode.
-- **Target Variable:** `is_churned` (1 = Churned, 0 = Retained).
+## 📈 Visualizations
+### Correlation Heatmap
+*Analysis of feature relationships and multicollinearity.*
+![Correlation Heatmap](correlation_heatmap.png)
 
-## 🧠 Model & Analysis
+### Numerical Pairplot
+*Distribution of daily minutes vs. skips for churned vs. retained users.*
+![Pairplot](pairplot_numeric.png)
 
-1.  **Data Processing:**
-    - Loaded the dataset and checked for null values.
-    - Performed feature scaling using `StandardScaler` to normalize numerical inputs.
-    - Split data into training and testing sets.
-
-2.  **Model:**
-    - **Logistic Regression:** Used as the baseline model to predict the binary outcome of churn.
-
-3.  **Key Insights (Example):**
-    - High `skip_rate` is often positively correlated with churn.
-    - Users with higher `listening_time` are generally less likely to churn.
-
-## 🚀 How to Run
-
-1.  Clone the repository:
-    ```bash
-    git clone <your-repo-url>
-    ```
-2.  Install required libraries:
-    ```bash
-    pip install pandas numpy matplotlib seaborn scikit-learn
-    ```
-3.  Open and run the notebook:
-    ```bash
-    jupyter notebook Churn_Analysis.ipynb
-    ```
-
-## 📈 Future Improvements
-
-- Test advanced models like **Random Forest** or **XGBoost** for better accuracy.
-- Perform hyperparameter tuning.
-- Deploy the model as a simple web app (using Streamlit or Flask).
+## 📂 Project Structure
+```bash
+Spotify-Customer-Churn/
+├── data/                   # Raw and Processed Data (Ignored by Git)
+├── notebooks/
+│   ├── 01_EDA_Cleaning.ipynb    # Data Janitor work
+│   ├── 02_Classical_Models.ipynb # Logistic Regression & XGBoost
+│   └── 03_Deep_Learning.ipynb    # PyTorch Implementation (In Progress)
+├── plots/                  # Generated PNGs
+├── README.md               # Project Documentation
+└── requirements.txt        # Dependencies
