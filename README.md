@@ -68,6 +68,20 @@ The confusion matrix visualizes the performance of the deployed model on the tes
 
 ---
 
+### Detailed Classification Report
+The detailed breakdown of Precision, Recall, and F1-Score for each class (0 = Retained, 1 = Churned).
+
+```text
+              precision    recall  f1-score   support
+
+           0       0.89      0.69      0.78       163
+           1       0.32      0.62      0.42        37
+
+    accuracy                           0.68       200
+   macro avg       0.60      0.66      0.60       200
+weighted avg       0.78      0.68      0.71       200
+
+
 ## 📂 Project Structure
 ```bash
 Spotify-Customer-Churn/
