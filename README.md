@@ -55,7 +55,6 @@ We used a split-pipeline approach to handle mixed data types safely:
 
 ### 3. Modeling
 - Addressed imbalance using `class_weight='balanced'` in Logistic Regression.
-- Tuned the **Decision Threshold** from 0.50 to 0.75 to reduce false positives.
 
 ---
 
